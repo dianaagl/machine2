@@ -1,6 +1,7 @@
 package sample;
 
 import automat.Mour_automation;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -19,8 +20,8 @@ import javafx.scene.text.Text;
  * Created by Диана on 28.04.2017.
  */
 public class Jump_Table {
-    TextField N;
-    TextField M;
+    private TextField N;
+    private TextField M;
     private Button table_but;
     private Button build_but;
     private AnchorPane pane;
@@ -53,41 +54,41 @@ public class Jump_Table {
                 jump_table = new TableView();
                 jump_table.setPrefHeight(120);
 
-                TableColumn<StringProperty[], String> columns[] = new TableColumn[n + 1];
+                TableColumn<StringProperty[], String> columns[] = new TableColumn[n];
+                TableColumn<StringProperty[],String> sigma  =new TableColumn<StringProperty[], String>("sigma");
 
-                columns[0] //
-                        = new TableColumn<StringProperty[], String>("sigma");
-                jump_table.getColumns().add(columns[0]);
-
-                for (int i = 0; i < n; i++) {
-                    final int t = i;
-                    columns[i + 1] //
+                sigma.setEditable(true);
+                jump_table.getColumns().add(0,sigma);
+                jump_table.setItems(getList(n, m));
+                for (int i = 0; i < n ; i++) {
+                    final int t = i ;
+                    columns[i ] //
                             = new TableColumn<StringProperty[], String>(String.valueOf(i));
                     columns[i].setCellValueFactory(cellData -> cellData.getValue()[t]);
-                    columns[i + 1].setEditable(true);
+                    columns[i ].setEditable(true);
 
 
-                    jump_table.getColumns().add(columns[i + 1]);
+                    jump_table.getColumns().add(columns[i]);
 
 
                 }
 
 
-                jump_table.setItems(getList(n, m));
+
 
                 jump_table.setEditable(true);
                 pane.getChildren().add(jump_table);
 
 
-                for (int i = 0; i < n; i++) {
+                for (int i = 0; i < n  ; i++) {
                     final int ti = i;
-                    columns[ti + 1].setCellFactory(TextFieldTableCell.forTableColumn());
-                    columns[ti + 1].setOnEditCommit(
+                    columns[ti ].setCellFactory(TextFieldTableCell.forTableColumn());
+                    columns[ti  ].setOnEditCommit(
 
                             new EventHandler<TableColumn.CellEditEvent<StringProperty[], String>>() {
                                 @Override
                                 public void handle(TableColumn.CellEditEvent<StringProperty[], String> t) {
-
+                                    System.out.print(t.getTableView().getFixedCellSize());
                                     ((StringProperty[]) t.getTableView().getItems().get(
                                             t.getTablePosition().getRow())
                                     )[ti] = new SimpleStringProperty(t.getNewValue());
@@ -95,10 +96,50 @@ public class Jump_Table {
                             }
                     );
                 }
+                sigma.setCellFactory(TextFieldTableCell.forTableColumn());
+                sigma.setOnEditCommit(
+
+                        new EventHandler<TableColumn.CellEditEvent<StringProperty[], String>>() {
+                            @Override
+                            public void handle(TableColumn.CellEditEvent<StringProperty[], String> t) {
+                                System.out.print(t.getTableView().getFixedCellSize());
+                                 t.getTableView().getItems().get(
+                                        t.getTablePosition().getRow())[0]
+                                = new SimpleStringProperty(t.getNewValue());
+                            }
+                        }
+                );
             }
 
         });
 
+    }
+    public int [][] getStates(){
+        int n = Integer.parseInt(N.getText());
+        int m = Integer.parseInt(M.getText());
+        int [][]states = new int[n][m];
+        StringProperty[][] data = new StringProperty[n][m];
+        ObservableList<StringProperty[]> list = FXCollections.observableArrayList();
+        list = jump_table.getItems();
+
+        int temp;
+        for(int i = 0;i < n;i++){
+            data[i] = list.get(i);
+            for(int j = 0;j < m;j++) {
+
+                try{
+                    if(data[i][j] != null) {
+                        temp = Integer.parseInt(data[i][j].getValue());
+                        states[i][j] = temp;
+                    }
+                }
+                catch (NumberFormatException e) {
+
+                }
+            }
+
+        }
+        return states;
     }
     public String [] get_Alphabet(){
         int n = Integer.parseInt(N.getText());
@@ -152,9 +193,7 @@ public class Jump_Table {
         ObservableList<StringProperty[]> list = FXCollections.observableArrayList();
         for (int j = 0; j < n; j++) {
 
-            for (int i = 1; i < m; i++) {
-                data[j][i] = new SimpleStringProperty(" ");
-            }
+
             data[j][0] = new SimpleStringProperty("w" + j);
 
             list.add(data[j]);

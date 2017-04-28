@@ -11,9 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-/**
- * Created by Диана on 28.04.2017.
- */
+
 public class Finite_Aut_Controller {
     @FXML
     private AnchorPane jump_table;
@@ -44,8 +42,17 @@ public class Finite_Aut_Controller {
             public void handle(MouseEvent mouseEvent) {
                 String [] alph = finite_table.get_Alphabet();
                 int N = Integer.parseInt(n.getText());
+                int M = Integer.parseInt(m.getText());
                 for(int i = 0;i < N;i++){
                     System.out.println(alph[i]);
+                }
+               int [][] states  = finite_table.getStates();
+               for(int i = 0;i < N;i++){
+                    for(int j = 0;j < M;j++) {
+
+
+                        System.out.println(states[i][j]);
+                    }
                 }
                // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
 
