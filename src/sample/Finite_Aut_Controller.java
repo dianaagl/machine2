@@ -1,7 +1,6 @@
 package sample;
 
 import automat.Finite_Automation;
-import automat.Mour_automation;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -10,6 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+
+import javax.swing.*;
 
 
 public class Finite_Aut_Controller {
@@ -46,6 +47,7 @@ public class Finite_Aut_Controller {
                 for(int i = 0;i < N;i++){
                     System.out.println(alph[i]);
                 }
+                System.out.print("alphabet\n");
                int [][] states  = finite_table.getStates();
                for(int i = 0;i < N;i++){
                     for(int j = 0;j < M;j++) {
@@ -54,6 +56,12 @@ public class Finite_Aut_Controller {
                         System.out.println(states[i][j]);
                     }
                 }
+                Finite_Automation aut = new Finite_Automation(N,M,states,alph);
+                HabrGraph frame = new HabrGraph(aut);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(400, 320);
+                frame.setVisible(true);
+
                // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
 
             }

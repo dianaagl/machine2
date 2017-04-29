@@ -54,33 +54,35 @@ public class Jump_Table {
                 jump_table = new TableView();
                 jump_table.setPrefHeight(120);
 
-                TableColumn<StringProperty[], String> columns[] = new TableColumn[n];
-                TableColumn<StringProperty[],String> sigma  =new TableColumn<StringProperty[], String>("sigma");
+                TableColumn<StringProperty[], String> columns[] = new TableColumn[m + 1];
+                //TableColumn<StringProperty[],String> sigma  =new TableColumn<StringProperty[], String>("sigma");
 
-                sigma.setEditable(true);
-                jump_table.getColumns().add(0,sigma);
-                jump_table.setItems(getList(n, m));
-                for (int i = 0; i < n ; i++) {
+                //sigma.setEditable(true);
+
+                //jump_table.getColumns().add(0,sigma);
+
+                for (int i = 0; i < m + 1; i++) {
                     final int t = i ;
                     columns[i ] //
-                            = new TableColumn<StringProperty[], String>(String.valueOf(i));
+                            = new TableColumn<StringProperty[], String>(String.valueOf(i ));
                     columns[i].setCellValueFactory(cellData -> cellData.getValue()[t]);
                     columns[i ].setEditable(true);
 
 
-                    jump_table.getColumns().add(columns[i]);
+                    jump_table.getColumns().add(i,columns[i]);
 
 
                 }
 
 
-
+                columns[0].setText("таблица переходов");
 
                 jump_table.setEditable(true);
+                jump_table.setItems(getList(jump_table.getItems(),n, m));
                 pane.getChildren().add(jump_table);
 
 
-                for (int i = 0; i < n  ; i++) {
+                for (int i = 0; i < m + 1; i++) {
                     final int ti = i;
                     columns[ti ].setCellFactory(TextFieldTableCell.forTableColumn());
                     columns[ti  ].setOnEditCommit(
@@ -96,7 +98,7 @@ public class Jump_Table {
                             }
                     );
                 }
-                sigma.setCellFactory(TextFieldTableCell.forTableColumn());
+                /*sigma.setCellFactory(TextFieldTableCell.forTableColumn());
                 sigma.setOnEditCommit(
 
                         new EventHandler<TableColumn.CellEditEvent<StringProperty[], String>>() {
@@ -109,6 +111,7 @@ public class Jump_Table {
                             }
                         }
                 );
+                */
             }
 
         });
@@ -182,23 +185,26 @@ public class Jump_Table {
         }
 
 
-        output_table.setItems(getList(1, m));
+        output_table.setItems(getList(output_table.getItems(),1, m));
 
         lambda_pane.getChildren().add(output_table);
     }
 
-    private ObservableList<StringProperty[]> getList(int n, int m) {
+    private ObservableList<StringProperty[]> getList(ObservableList<StringProperty[]> list,int n, int m) {
 
-        StringProperty[][] data = new StringProperty[n][m];
-        ObservableList<StringProperty[]> list = FXCollections.observableArrayList();
+        StringProperty[][] data = new StringProperty[n][m+1];
+        list = FXCollections.observableArrayList();
+        ObservableList<StringProperty[] > l = FXCollections.observableArrayList();
+
         for (int j = 0; j < n; j++) {
 
 
             data[j][0] = new SimpleStringProperty("w" + j);
-
             list.add(data[j]);
 
+
         }
+
 
 
         return list;
