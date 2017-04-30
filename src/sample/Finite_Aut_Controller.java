@@ -1,6 +1,7 @@
 package sample;
 
 import automat.Finite_Automation;
+import automat.State;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -21,11 +22,14 @@ public class Finite_Aut_Controller {
     @FXML
     private Button draw_graph_but;
     @FXML
+    private Button saveToXML;
+    @FXML
     private TextField n;
     @FXML
     private TextField m;
     private static Stage stage;
     private Parent root;
+    private Finite_Automation aut;
     public Finite_Aut_Controller(){
 
     }
@@ -56,13 +60,32 @@ public class Finite_Aut_Controller {
                         System.out.println(states[i][j]);
                     }
                 }
-                Finite_Automation aut = new Finite_Automation(N,M,states,alph);
+                State [] States =new State[M];
+                int r = 200;
+                int xc = 200;
+                int yc = 200;
+                for(int i = 0;i < M;i++){
+                    States[i] = new State(String.valueOf(i),String.valueOf(i+1),(int)(xc + (int)r*Math.cos((Math.PI )*i*2.0f/M)),(int)(yc + r* Math.sin((Math.PI)*i*2.0f/M)));
+
+                }
+                aut = new Finite_Automation(N,M,states,States,alph);
                 HabrGraph frame = new HabrGraph(aut);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setSize(400, 320);
                 frame.setVisible(true);
 
                // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
+
+            }
+        });
+        saveToXML.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(aut != null){
+                    aut.SaveToXML();
+                }
+
+                // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
 
             }
         });

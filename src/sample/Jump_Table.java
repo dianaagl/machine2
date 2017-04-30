@@ -121,19 +121,19 @@ public class Jump_Table {
         int n = Integer.parseInt(N.getText());
         int m = Integer.parseInt(M.getText());
         int [][]states = new int[n][m];
-        StringProperty[][] data = new StringProperty[n][m];
+        StringProperty[][] data = new StringProperty[n][m+1];
         ObservableList<StringProperty[]> list = FXCollections.observableArrayList();
         list = jump_table.getItems();
 
         int temp;
         for(int i = 0;i < n;i++){
             data[i] = list.get(i);
-            for(int j = 0;j < m;j++) {
+            for(int j = 1;j < m+1;j++) {
 
                 try{
                     if(data[i][j] != null) {
                         temp = Integer.parseInt(data[i][j].getValue());
-                        states[i][j] = temp;
+                        states[i][j-1] = temp;
                     }
                 }
                 catch (NumberFormatException e) {
