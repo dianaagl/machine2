@@ -48,11 +48,13 @@ public class Finite_Automation {
 
             Node root = document.createElement("structure");
             // Вызываем метод для добавления новой книг
+            Element br = document.createElement("br");
+            root.appendChild(br);
             Element automaton = document.createElement("automaton");
             Element type = document.createElement("type");
             type.setTextContent("fa");
             root.appendChild(type);
-
+            root.appendChild(br);
 
             // <Title>
             for(int i = 0;i < states_count;i++){
@@ -64,6 +66,7 @@ public class Finite_Automation {
                     Element y = document.createElement("y");
                     y.setTextContent(String.valueOf(States[i].getY()));
                     state.appendChild(x);
+                    state.appendChild(br);
                     state.appendChild(y);
                 automaton.appendChild(state);
             }

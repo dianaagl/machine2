@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="parent" prefHeight="480.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="sample.Finite_Aut_Controller">
+<AnchorPane id="parent" fx:id="parentPane" prefHeight="480.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="sample.Finite_Aut_Controller">
   <children>
     <Button id="build_but" fx:id="show_table_but" layoutX="391.0" layoutY="185.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="140.0" text="Построить таблицу" />
     <Label layoutX="261.0" layoutY="54.0" prefWidth="131.0" text="Конечный автомат">

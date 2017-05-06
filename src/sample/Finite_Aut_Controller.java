@@ -16,6 +16,8 @@ import javax.swing.*;
 
 public class Finite_Aut_Controller {
     @FXML
+    private   AnchorPane parentPane;
+    @FXML
     private AnchorPane jump_table;
     @FXML
     private Button show_table_but;
@@ -30,6 +32,7 @@ public class Finite_Aut_Controller {
     private static Stage stage;
     private Parent root;
     private Finite_Automation aut;
+    private HabrGraph frame;
     public Finite_Aut_Controller(){
 
     }
@@ -69,9 +72,9 @@ public class Finite_Aut_Controller {
 
                 }
                 aut = new Finite_Automation(N,M,states,States,alph);
-                HabrGraph frame = new HabrGraph(aut);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setSize(400, 320);
+                frame = new HabrGraph(aut);
+                //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(800, 720);
                 frame.setVisible(true);
 
                // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
@@ -82,7 +85,12 @@ public class Finite_Aut_Controller {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(aut != null){
+                    aut = frame.SaveGraph(aut);
                     aut.SaveToXML();
+                    some_gr s = new some_gr();
+                    s.setSize(400, 320);
+                    s.setVisible(true);
+                    frame.Show_vert(String.valueOf(1));
                 }
 
                 // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
