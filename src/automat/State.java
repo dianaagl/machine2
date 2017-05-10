@@ -8,7 +8,24 @@ public class State {
     String name;
     int x;
     int y;
+    String output;
 
+
+    public State(String id, String name, int x, int y, String output) {
+        this.id = id;
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.output = output;
+    }
+
+    public State(String id, String name, int x, int y) {
+
+        this.id = id;
+        this.name = name;
+        this.x = x;
+        this.y = y;
+    }
 
     public int getX() {
         return x;
@@ -34,11 +51,7 @@ public class State {
         this.name = name;
     }
 
-    public State(String id, String name,int x,int y) {
-
-        this.id = id;
-        this.name = name;
-        this.x= x;
-        this.y = y;
+    public String getOutput() {
+        return output;
     }
 }

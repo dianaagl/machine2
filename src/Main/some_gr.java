@@ -1,24 +1,15 @@
-package sample;
-
-import java.util.Arrays;
-import java.util.EventObject;
-
-import javax.swing.JFrame;
+package Main;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxDomUtils;
+import com.mxgraph.view.mxGraph;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxKeyboardHandler;
-import com.mxgraph.swing.handler.mxRubberband;
-import com.mxgraph.util.mxDomUtils;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource.mxIEventListener;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxMultiplicity;
 import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.util.EventObject;
 
 
 public class some_gr extends JFrame

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="parent" prefHeight="480.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="Main.Main_Controller">
+  <children>
+    <Button fx:id="mour_but" layoutX="217.0" layoutY="77.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="151.0" text="Автомат Мура" />
+    <Button id="finite_aut" fx:id="finite_but" layoutX="217.0" layoutY="146.0" mnemonicParsing="false" prefHeight="29.999900000002526" prefWidth="151.0" text="Конечный автомат" />
+    <Button fx:id="millie_but" layoutX="217.0" layoutY="210.0" mnemonicParsing="false" prefHeight="29.999900000002526" prefWidth="150.9998779296875" text="Автомат Милли" />
+    <Button fx:id="shop_but" layoutX="217.0" layoutY="278.0" minHeight="18.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="151.0" text="Магазинный автомат" />
+  </children>
+</AnchorPane>
