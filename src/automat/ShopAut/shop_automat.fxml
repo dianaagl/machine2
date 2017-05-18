@@ -1,54 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.text.*?>
-
-<AnchorPane id="parent" fx:id="parentPane" prefHeight="600.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="automat.ShopAut.Shop_controller">
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="parent" fx:id="parentPane" prefHeight="600.0" prefWidth="700.0"
+            xmlns="http://javafx.com/javafx/2.2" fx:controller="automat.ShopAut.Shop_controller">
   <children>
+    <MenuBar fx:id="menu_bar" layoutX="0.0" layoutY="-2.0" minHeight="22.0" prefHeight="31.0" prefWidth="199.0">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleSaveAs" text="save" fx:id="save"/>
+            <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="open"/>
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Delete"/>
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About"/>
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
     <Label layoutX="246.0" layoutY="52.0" prefHeight="21.0" prefWidth="209.0" text="Автомат с магазинной памятью">
       <font>
         <Font size="14.0" />
       </font>
     </Label>
-    <TextField id="input" fx:id="input_lent" layoutX="232.0" layoutY="441.0" prefHeight="37.0" prefWidth="317.0" promptText="w0 w1 w2" />
-    <Button id="table_but" fx:id="draw_graph_but" layoutX="483.0" layoutY="219.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Построить автомат" />
+    <TextField id="input" fx:id="input_lent" layoutX="73.0" layoutY="436.0" prefHeight="37.0" prefWidth="317.0"
+               promptText="w0 w1 w2"/>
+    <Button id="table_but" fx:id="draw_graph_but" layoutX="491.0" layoutY="55.0" mnemonicParsing="false"
+            prefHeight="37.0" prefWidth="131.0" text="Построить автомат"/>
     <Label layoutX="73.0" layoutY="92.0" prefWidth="541.0" text="Введите количество состояний и количество слов входного алфавита" />
     <Label layoutX="77.0" layoutY="125.0" prefHeight="31.0" prefWidth="147.0" text="Правила автомата" />
-    <Button fx:id="saveToXML" layoutX="483.0" layoutY="152.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Сохранить в xml" />
-    <Label layoutX="236.0" layoutY="389.0" prefHeight="38.0" prefWidth="147.0" text="входная лента" />
-    <Label layoutX="469.0" layoutY="284.0" text="нач состояние" />
-    <Label layoutX="564.0" layoutY="284.0" text="конечные состояния" />
-    <Button fx:id="begin_aut" layoutX="73.0" layoutY="525.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="115.0" text="Начать построение" />
-    <Button fx:id="doStep_but" layoutX="73.0" layoutY="469.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="115.0" text="Сделать ход" />
-    <Button fx:id="load_button" layoutX="483.0" layoutY="81.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="131.0" text="загрузить автомат" />
-    <TextField fx:id="qn" layoutX="601.0" layoutY="318.0" prefWidth="42.0" promptText="4 5" text="3" />
-    <TextField fx:id="q0" layoutX="483.0" layoutY="318.0" prefWidth="34.0" promptText="1" text="0" />
-    <Label layoutX="236.0" layoutY="487.0" prefHeight="38.0" prefWidth="106.0" text="магазин" />
-    <Button id="build_but" fx:id="show_table_but" layoutX="73.0" layoutY="371.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="140.0" text="добавить правило" />
-    <ScrollPane layoutX="73.0" layoutY="175.0" prefHeight="196.0" prefWidth="396.0">
+    <Label layoutX="77.0" layoutY="390.0" prefHeight="38.0" prefWidth="140.0" text="входная лента"/>
+    <Label layoutX="419.0" layoutY="393.0" text="нач состояние"/>
+    <Label layoutX="507.0" layoutY="393.0" text="конечные состояния"/>
+    <Button fx:id="begin_aut" layoutX="499.0" layoutY="122.0" mnemonicParsing="false" prefHeight="37.0"
+            prefWidth="115.0" text="Начать построение"/>
+    <Button fx:id="doStep_but" layoutX="499.0" layoutY="200.0" mnemonicParsing="false" prefHeight="37.0"
+            prefWidth="115.0" text="Сделать ход"/>
+    <TextField fx:id="Sqn" layoutX="557.0" layoutY="436.0" prefWidth="42.0" promptText="4 5" text=""/>
+    <TextField fx:id="Sq0" layoutX="442.0" layoutY="436.0" prefWidth="34.0" promptText="1" text=""/>
+    <Label layoutX="77.0" layoutY="473.0" prefHeight="38.0" prefWidth="106.0" text="магазин"/>
+    <Button id="build_but" fx:id="add_rule_butt" layoutX="73.0" layoutY="352.0" mnemonicParsing="false"
+            prefHeight="37.0" prefWidth="140.0" text="добавить правило"/>
+    <ScrollPane layoutX="73.0" layoutY="175.0" prefHeight="177.0" prefWidth="396.0">
       <content>
-        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="381.0">
+        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="177.0" prefWidth="381.0">
           <children>
-            <TableView editable="true" layoutX="-6.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefHeight="200.0" prefWidth="387.0" tableMenuButtonVisible="true">
+            <TableView fx:id="rule_table" blendMode="MULTIPLY" cache="false" editable="true" focusTraversable="false"
+                       layoutX="0.0" layoutY="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                       minWidth="-1.0" mouseTransparent="false" prefHeight="177.0" prefWidth="382.0"
+                       tableMenuButtonVisible="false">
               <columns>
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="32.0" text="№" />
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="43.0" text="q" />
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="55.0" text="a" />
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="41.0" text="z" />
-                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="92.0" text="----&gt;" />
-                <TableColumn maxWidth="5000.0" minWidth="2.0" prefWidth="54.0" text="q`" />
-                <TableColumn prefWidth="75.0" text="z`" />
+                <TableColumn maxWidth="40.0" minWidth="30.0" prefWidth="30.0" text="№" fx:id="number"/>
+                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="43.0" text="q" fx:id="q0"/>
+                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="66.0" text="a" fx:id="a"/>
+                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="63.0" text="z" fx:id="z0"/>
+                <TableColumn maxWidth="34.0" minWidth="34.0" prefWidth="34.0" text="----&gt;" fx:id="arrow"/>
+                <TableColumn maxWidth="5000.0" minWidth="2.0" prefWidth="54.0" text="q`" fx:id="qn"/>
+                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="69.0" text="z`" fx:id="zn"/>
               </columns>
             </TableView>
           </children>
         </AnchorPane>
       </content>
     </ScrollPane>
+    <Label fx:id="shop_lent" layoutX="77.0" layoutY="511.0" prefHeight="37.0" prefWidth="313.0" text="w2 w3 w4"/>
   </children>
 </AnchorPane>

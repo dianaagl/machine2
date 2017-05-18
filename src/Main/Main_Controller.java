@@ -105,7 +105,7 @@ public class Main_Controller {
                     stage.show();
 
                 } catch (IOException e) {
-                    System.out.print("конечный автомат");
+                    System.out.print(e.toString());
                 }
             }
         });

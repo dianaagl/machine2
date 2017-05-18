@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 /**
  * Created by Диана on 28.04.2017.
  */
+
 public class Jump_Table {
     private TextField N;
     private TextField M;

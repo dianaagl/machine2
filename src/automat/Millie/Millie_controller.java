@@ -174,10 +174,10 @@ public class Millie_controller {
 // The Java 8 way to get the response value (with lambda expression).
 
                 if (aut != null) {
-                    aut.LoadAutomation(result.get());
+                    aut = (Millie_automation) aut.LoadAutomation(result.get());
                 } else {
                     aut = new Millie_automation();
-                    aut.LoadAutomation(result.get());
+                    aut = (Millie_automation) aut.LoadAutomation(result.get());
                 }
                 frame = new graph.Graph(aut);
                 frame.setSize(800, 720);

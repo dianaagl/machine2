@@ -1,6 +1,5 @@
 package automat.Finite;
 
-import Main.some_gr;
 import automat.Jump_Table;
 import automat.State;
 import graph.graph;
@@ -119,9 +118,6 @@ public class Finite_Aut_Controller {
                     result.ifPresent(name -> System.out.println("Your name: " + name));
                     aut = (Finite_Automation) frame.SaveGraph(aut);
                     aut.SaveToXML(result.get());
-                    some_gr s = new some_gr();
-                    s.setSize(400, 320);
-                    s.setVisible(true);
 
                 }
 
@@ -170,10 +166,10 @@ public class Finite_Aut_Controller {
 // The Java 8 way to get the response value (with lambda expression).
                 result.ifPresent(name -> System.out.println("Your name: " + name));
                 if (aut != null) {
-                    aut.LoadAutomation(result.get());
+                    aut = (Finite_Automation) aut.LoadAutomation(result.get());
                 } else {
                     aut = new Finite_Automation();
-                    aut.LoadAutomation(result.get());
+                    aut = (Finite_Automation) aut.LoadAutomation(result.get());
                 }
                 frame = new graph.Graph(aut);
                 frame.setSize(800, 720);

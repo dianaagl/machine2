@@ -29,12 +29,16 @@ public abstract class Automation {
     private int alphabet_size;
     private int states_count;
     private int[][] jump_table;
-    private State[] States;
+    private ArrayList<State> States;
     private String[] alphabet;
     private int q0;
     private int[] qn;
     private String[] input_lent;
 
+
+    public ArrayList<State> getStatesArray(ArrayList<State> states) {
+        return States;
+    }
     private void writeDocument(Document document, String filename) throws TransformerFactoryConfigurationError {
         try {
             Transformer tr = TransformerFactory.newInstance().newTransformer();
@@ -138,12 +142,13 @@ public abstract class Automation {
 
     }
 
-    public void LoadAutomation(String filename) {
+    public Automation LoadAutomation(String filename) {
         try {
             // Создается построитель документа
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             // Создается дерево DOM документа из файла
             Document document = documentBuilder.parse(filename);
+            System.out.print(filename);
 
             // Получаем корневой элемент
             Element root = document.getDocumentElement();
@@ -151,7 +156,7 @@ public abstract class Automation {
 
             NodeList type = root.getElementsByTagName("type");
             String typeContent = type.item(0).getTextContent();
-            if (typeContent.equals("fa")) {
+
                 NodeList states_nodes = root.getElementsByTagName("state");
                 NodeList transitions_nodes = root.getElementsByTagName("transition");
                 NodeList alfabet_nodes = root.getElementsByTagName("read");
@@ -173,8 +178,9 @@ public abstract class Automation {
                     newAlfabet[i] = (String) alfabet_list.get(i);
                 }
 
-                State[] newStates = new State[states_nodes.getLength()];
+            ArrayList<State> newStates = new ArrayList<State>(states_nodes.getLength());
                 int[][] new_jumpTable = new int[alfabet_size][states_size];
+            String[][] new_Lambda_mealy = new String[alfabet_size][states_size];
 
                 for (int i = 0; i < states_nodes.getLength(); i++) {
                     NamedNodeMap state_attr = states_nodes.item(i).getAttributes();
@@ -182,11 +188,11 @@ public abstract class Automation {
                     System.out.println(x.item(0).getTextContent());
 
                     NodeList y = ((Element) states_nodes.item(i)).getElementsByTagName("y");//.getChildNodes().item(1);
-                    newStates[i] = new State(state_attr.getNamedItem("id").getNodeValue(),
+                    newStates.add(i, new State(state_attr.getNamedItem("id").getNodeValue(),
                             state_attr.getNamedItem("name").getNodeValue(),
                             Integer.parseInt(x.item(0).getTextContent()),
                             Integer.parseInt(y.item(0).getTextContent())
-                    );
+                    ));
                     if (typeContent.equals("moore")) {
                         NodeList output = ((Element) states_nodes.item(i)).getElementsByTagName("output");
                         newLambda[i] = output.item(0).getTextContent();
@@ -211,6 +217,11 @@ public abstract class Automation {
                     new_jumpTable[alfabet_list.indexOf(item.getElementsByTagName("read").item(0).getTextContent())]
                             [Integer.parseInt(item.getElementsByTagName("from").item(0).getTextContent())] =
                             Integer.parseInt(item.getElementsByTagName("to").item(0).getTextContent());
+                    if (this instanceof Millie_automation) {
+                        new_Lambda_mealy[alfabet_list.indexOf(item.getElementsByTagName("read").item(0).getTextContent())]
+                                [Integer.parseInt(item.getElementsByTagName("from").item(0).getTextContent())] =
+                                item.getElementsByTagName("transout").item(0).getTextContent();
+                    }
 
                 }
                 for (int i = 0; i < alfabet_size; i++) {
@@ -223,10 +234,17 @@ public abstract class Automation {
                 this.alphabet = newAlfabet;
                 this.States = newStates;
                 this.jump_table = new_jumpTable;
-                if (this instanceof Mour_automation) {
-                    ((Mour_automation) this).setLambda(newLambda);
-                }
+            if (this instanceof Finite_Automation) {
+                return new Finite_Automation(alfabet_size, states_size, jump_table, newStates.toArray(new State[newStates.size()]), newAlfabet);
             }
+                if (this instanceof Mour_automation) {
+
+                    return new Mour_automation(jump_table, newLambda, alphabet, newStates.toArray(new State[newStates.size()]), alfabet_size, states_size);
+                }
+            if (this instanceof Millie_automation) {
+                return new Millie_automation(jump_table, new_Lambda_mealy, newAlfabet, newStates.toArray(new State[newStates.size()]), alfabet_size, states_size);
+            }
+
 
 
         } catch (ParserConfigurationException ex) {
@@ -236,7 +254,7 @@ public abstract class Automation {
         } catch (IOException ex) {
             ex.printStackTrace(System.out);
         }
-
+        return this;
     }
 
     abstract public int getIndex();

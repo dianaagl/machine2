@@ -4,7 +4,11 @@ import automat.Automation;
 import automat.Finite.Finite_Automation;
 import automat.Millie.Millie_automation;
 import automat.Moore.Mour_automation;
+import automat.ShopAut.Key;
+import automat.ShopAut.Shop_automation;
+import automat.ShopAut.Takt;
 import automat.State;
+import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
@@ -18,9 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.EventObject;
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * Created by Диана on 28.04.2017.
@@ -53,7 +55,7 @@ public class graph {
                             if (elt.getTagName().equalsIgnoreCase("state")) {
                                 String name = elt.getAttribute("name");
                                 //String lastName = elt.getAttribute("lastName");
-                                if (aut instanceof Finite_Automation || aut instanceof Millie_automation) {
+                                if (aut instanceof Finite_Automation || aut instanceof Millie_automation || aut instanceof Shop_automation) {
                                     return name;
                                 } else if (aut instanceof Mour_automation) {
                                     return name + "," + elt.getAttribute("lambda");
@@ -139,11 +141,15 @@ public class graph {
                 int[][] states = aut.getJump_table();
                 State[] States = aut.getStates();
                 String[] lambda = null;
+                HashMap<Key, Takt> rules_map = new HashMap<Key, Takt>();
                 if (aut instanceof Mour_automation) {
                     lambda = ((Mour_automation) aut).getLambda();
                 }
                 if (aut instanceof Millie_automation) {
                     output_labels = ((Millie_automation) aut).getLambda();
+                }
+                if (aut instanceof Shop_automation) {
+                    rules_map = ((Shop_automation) aut).getRule_map();
                 }
                 vert = new mxCell[m];
                 int r = 150;
@@ -190,7 +196,18 @@ public class graph {
                     System.out.println(States[i].getX() + " " + States[i].getName());
                     vert[i] = (mxCell) graph.insertVertex(parent, String.valueOf(i), state, States[i].getX(), States[i].getY(), 50, 50, "ROUNDED");//insertVertex(parent, null, sourceNode, 20, 20,
                 }
-                if (aut instanceof Millie_automation) {
+                if (aut instanceof Shop_automation) {
+
+                    Iterator<HashMap.Entry<Key, Takt>> itr = rules_map.entrySet().iterator();
+                    while (itr.hasNext()) {
+                        Map.Entry<Key, Takt> me = (Map.Entry) itr.next();
+                        System.out.println(me.getValue().getId_state());
+                        graph.insertEdge(parent, "id", me.getKey().curr_symb_lent + "," + me.getKey().curr_symb_stek + "," + me.getValue().getStek(),
+                                vert[((Shop_automation) aut).getIndexOf(me.getKey().id_state)],
+                                vert[((Shop_automation) aut).getIndexOf(me.getValue().getId_state())],
+                                "edge_style");
+                    }
+                } else if (aut instanceof Millie_automation) {
                     for (int i = 0; i < n; i++) {
                         for (int j = 0; j < m; j++) {
                             System.out.print(states[i][j]);
@@ -234,10 +251,16 @@ public class graph {
             graphComponent.setConnectable(true);
             graphComponent.setToolTips(true);
 
-
-            mxParallelEdgeLayout layout = new mxParallelEdgeLayout(graph);
-            layout.isUseBoundingBox();
+            mxParallelEdgeLayout layout2 = new mxParallelEdgeLayout(graph);
+            mxCircleLayout layout = new mxCircleLayout(graph);
+            layout.setRadius(200);
+            layout.setX0(100);
+            layout.setY0(100);
             layout.execute(parent);
+            layout2.execute(parent);
+
+
+
 
 
             // Enables rubberband selection
@@ -316,7 +339,7 @@ public class graph {
                 style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
 
                 style.put(mxConstants.STYLE_FONTCOLOR, "#0D142B");
-                style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_SIDETOSIDE);
+
                 style.put(mxConstants.PERIMETER_ELLIPSE, true);
                 style.put(mxConstants.STYLE_STROKEWIDTH, 5);
                 style.put(mxConstants.STYLE_ARCSIZE, 50);
@@ -331,13 +354,12 @@ public class graph {
                 style2.put(mxConstants.STYLE_FONTCOLOR, "#251818");
                 style2.put(mxConstants.STYLE_FONTSIZE, 20);
 
-                style2.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_SIDETOSIDE);
-                style2.put(mxConstants.STYLE_ROUNDED, true);
+
                 style2.put(mxConstants.PERIMETER_ELLIPSE, true);
                 style2.put(mxConstants.STYLE_STROKEWIDTH, 4);
-                style2.put(mxConstants.STYLE_STROKECOLOR, "#414F81");
-                style2.put(mxConstants.STYLE_ARCSIZE, 50);
-                style2.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);//] = mxEdgeStyle.ElbowConnector;
+                style2.put(mxConstants.STYLE_STROKECOLOR, "#414F00");
+
+                //] = mxEdgeStyle.ElbowConnector;
                 stylesheet.putCellStyle("edge_show", style2);
                 Object[] hightlight = new Object[1];
                 Object[] highlight_edge = new Object[1];
@@ -360,7 +382,7 @@ public class graph {
 
 
                             String id_temp = elt.getAttribute("id");
-                            System.out.println("id=" + id_temp);
+                            System.out.println("id=" + id_temp + " quals " + id);
                             if (id_temp.equals(id)) {
 
                                 hightlight[0] = (connect[j]);
@@ -414,6 +436,114 @@ public class graph {
             return -1;
         }
 
+        public Automation SaveGraph(Shop_automation automat) {
+            graph.getModel().beginUpdate();
+
+            try {
+                System.out.println("SaveGraph");
+                Object[] cells = graph.getChildCells(parent);
+                HashMap<Key, Takt> map = new HashMap<Key, Takt>();
+
+                int num_of_states = graph.getChildVertices(parent).length;
+                int alphabet_size = cells.length - num_of_states;
+
+                ArrayList<String> alfabet_list = new ArrayList();
+
+                ArrayList<State> states = new ArrayList();
+
+                int count_s = 0;
+                int count_alp = 0;
+
+                for (int i = 0; i < cells.length; i++) {
+
+                    if (cells[i] instanceof mxCell) {
+                        //Object el_val = ((mxCell) cells[i]).getValue();
+                        Element elem = getElfromObj(cells[i]);
+                        //                    System.out.print(elem.toString());
+                        if (((mxCell) cells[i]).isEdge()) {
+                            System.out.println("edge");
+
+
+                            String[] symbols = graph.getLabel((mxCell) cells[i]).split(",");
+                            if (symbols[0].equals("") || symbols[1].equals("")) {
+                                System.out.print("label=0");
+                                Object source = ((mxCell) cells[i]).getSource();
+                                if (getElfromObj(source) != null) {
+                                    Element elt = getElfromObj(source);
+                                    String id = elt.getAttribute("id");
+                                    String name = elt.getAttribute("name");
+                                    System.out.println("from id=" + id + " name=" + name);
+
+                                }
+                                Object target = ((mxCell) cells[i]).getTarget();
+                                if (getElfromObj(target) != null) {
+                                    Element elt = getElfromObj(target);
+                                    String id = elt.getAttribute("id");
+                                    String name = elt.getAttribute("name");
+                                    System.out.println("to id=" + id + " name=" + name);
+
+                                }
+
+                            } else {
+                                int index_str = -1;
+
+                                if (alfabet_list.contains(symbols[0])) {
+                                    index_str = alfabet_list.indexOf(symbols[0]);
+                                } else {
+                                    alfabet_list.add(symbols[0]);
+                                    count_alp++;
+                                }
+                                Object source = ((mxCell) cells[i]).getSource();
+                                Object target = ((mxCell) cells[i]).getTarget();
+                                if (getElfromObj(source) != null && getElfromObj(target) != null) {
+                                    Element elt = getElfromObj(source);
+                                    String id = elt.getAttribute("id");
+                                    System.out.println("id= " + id);
+                                    Element eltT = getElfromObj(target);
+                                    String idT = eltT.getAttribute("id");
+                                    System.out.println("id= " + idT + index_str);
+
+                                    map.put(new Key(id, symbols[0], symbols[1]), new Takt(idT, symbols[2]));
+
+                                } else {
+
+                                    System.out.println("error no source or target" + graph.getLabel((mxCell) cells[i]));
+                                }
+
+
+                            }
+                        } else if (((mxCell) cells[i]).isVertex()) {
+                            elem.setAttribute("x", String.valueOf(((int) ((mxCell) cells[i]).getGeometry().getPoint().getLocation().getX())));
+                            elem.setAttribute("y", String.valueOf(((int) ((mxCell) cells[i]).getGeometry().getPoint().getLocation().getY())));
+                            System.out.println("vertex:" + elem.getAttribute("id") + " " + elem.getAttribute("name"));
+
+                            states.add(new State(elem.getAttribute("id"),
+                                    elem.getAttribute("name"),
+                                    Integer.parseInt(elem.getAttribute("x")),
+                                    Integer.parseInt(elem.getAttribute("y"))));
+                        }
+
+
+                    }
+                }
+                alphabet_size = alfabet_list.size();
+                num_of_states = states.size();
+
+
+                automat.setAlphabet(alfabet_list.toArray(new String[alphabet_size]));
+                automat.setStates(states);
+                automat.setAlphabet_size(alphabet_size);
+                automat.setStates_count(num_of_states);
+
+                return automat;
+
+            } finally {
+                graph.getModel().endUpdate();
+                (graphComponent).validateGraph();
+
+
+            }
+        }
         public Automation SaveGraph(Automation automat) {
 
 

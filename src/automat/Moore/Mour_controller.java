@@ -162,7 +162,7 @@ public class Mour_controller {
         load_button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                TextInputDialog dialog = new TextInputDialog("newFile.xml");
+                TextInputDialog dialog = new TextInputDialog("moore.xml");
                 dialog.setTitle("Enter filename");
                 dialog.setHeaderText("Look, a Text Input Dialog");
                 dialog.setContentText("Please enter filename:");
@@ -174,10 +174,10 @@ public class Mour_controller {
 // The Java 8 way to get the response value (with lambda expression).
 
                 if (aut != null) {
-                    aut.LoadAutomation(result.get());
+                    aut = (Mour_automation) aut.LoadAutomation(result.get());
                 } else {
                     aut = new Mour_automation();
-                    aut.LoadAutomation(result.get());
+                    aut = (Mour_automation) aut.LoadAutomation(result.get());
                 }
                 frame = new graph.Graph(aut);
                 frame.setSize(800, 720);
