@@ -6,6 +6,26 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="parent" fx:id="parentPane" prefHeight="600.0" prefWidth="700.0"
             xmlns="http://javafx.com/javafx/2.2" fx:controller="automat.Moore.Mour_controller">
     <children>
+        <MenuBar fx:id="menu_bar" layoutX="0.0" layoutY="-2.0" minHeight="22.0" prefHeight="31.0" prefWidth="199.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleSaveAs" text="save" fx:id="save"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="open"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
         <Label layoutX="261.0" layoutY="54.0" prefWidth="131.0" text="Автомат Мура">
             <font>
                 <Font size="14.0"/>
@@ -39,17 +59,15 @@
                             prefHeight="-1.0" prefWidth="-1.0" snapToPixel="false"/>
             </content>
         </ScrollPane>
-        <Button fx:id="saveToXML" layoutX="483.0" layoutY="152.0" mnemonicParsing="false" prefHeight="37.0"
-                prefWidth="131.0" text="Сохранить в xml"/>
+
         <Label layoutX="236.0" layoutY="403.0" prefHeight="38.0" prefWidth="147.0" text="входная лента"/>
         <Label layoutX="483.0" layoutY="284.0" text="нач состояние"/>
-        <Label layoutX="483.0" layoutY="362.0" text="конечные состояния"/>
+
         <Button fx:id="begin_aut" layoutX="69.0" layoutY="447.0" mnemonicParsing="false" prefHeight="37.0"
                 prefWidth="115.0" text="Начать построение"/>
         <Button fx:id="doStep_but" layoutX="69.0" layoutY="525.0" mnemonicParsing="false" prefHeight="37.0"
                 prefWidth="115.0" text="Сделать ход"/>
-        <Button fx:id="load_button" layoutX="483.0" layoutY="81.0" mnemonicParsing="false" prefHeight="38.0"
-                prefWidth="131.0" text="загрузить автомат"/>
+
         <TextField fx:id="qn" layoutX="483.0" layoutY="403.0" prefWidth="42.0" promptText="4 5" text="3"/>
         <TextField fx:id="q0" layoutX="483.0" layoutY="318.0" prefWidth="34.0" promptText="1" text="0"/>
         <Label fx:id="output_lent" layoutX="228.0" layoutY="525.0" prefHeight="37.0" prefWidth="313.0" text=""/>

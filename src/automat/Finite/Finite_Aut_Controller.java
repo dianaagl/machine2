@@ -1,23 +1,24 @@
 package automat.Finite;
 
+import automat.Aut_cont;
 import automat.Jump_Table;
 import automat.State;
 import graph.graph;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.util.Optional;
+import java.io.File;
 
 
-public class Finite_Aut_Controller {
-    private static Stage stage;
+public class Finite_Aut_Controller extends Aut_cont {
     @FXML
     private AnchorPane parentPane;
     @FXML
@@ -26,8 +27,7 @@ public class Finite_Aut_Controller {
     private Button show_table_but;
     @FXML
     private Button draw_graph_but;
-    @FXML
-    private Button saveToXML;
+
     @FXML
     private TextField n;
     @FXML
@@ -42,19 +42,73 @@ public class Finite_Aut_Controller {
     private Button begin_aut;
     @FXML
     private Button doStep_but;
-    @FXML
-    private Button load_button;
-    private Parent root;
-    private Finite_Automation aut;
-    private graph.Graph frame;
 
     public Finite_Aut_Controller() {
 
     }
 
+    /**
+     * Сохраняет файл в файл адресатов, который в настоящее время открыт.
+     * Если файл не открыт, то отображается диалог "save as".
+     */
+
+
     public Finite_Aut_Controller(Stage stage, Parent root) {
-        this.stage = stage;
-        this.root = root;
+        super(stage, root);
+
+    }
+
+    @FXML
+    private void handleOpen() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Задаём фильтр расширений
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "XML files (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Показываем диалог загрузки файла
+        File file = fileChooser.showOpenDialog(stage);
+
+        if (file != null) {
+            if (aut != null) {
+                aut = (Finite_Automation) aut.LoadAutomation(file.getAbsolutePath());
+            } else {
+                aut = new Finite_Automation();
+                aut = (Finite_Automation) aut.LoadAutomation(file.getAbsolutePath());
+            }
+            frame = new graph.Graph(aut, "old");
+            frame.setSize(800, 720);
+            frame.setVisible(true);
+
+        }
+    }
+
+    /**
+     * Открывает FileChooser, чтобы пользователь имел возможность
+     * выбрать файл, куда будут сохранены данные
+     */
+    @FXML
+    private void handleSaveAs() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Задаём фильтр расширений
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "XML files (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Показываем диалог сохранения файла
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            // Make sure it has the correct extension
+            if (!file.getPath().endsWith(".xml")) {
+                file = new File(file.getPath() + ".xml");
+            }
+
+            aut = (Finite_Automation) frame.SaveGraph(aut);
+            aut.SaveToXML(file.getAbsolutePath());
+        }
     }
 
     public void initialize() {
@@ -89,49 +143,23 @@ public class Finite_Aut_Controller {
 
                 }
                 aut = new Finite_Automation(N, M, states, States, alph);
-                frame = new graph.Graph(aut);
+                frame = new graph.Graph(aut, "new");
                 //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setSize(800, 720);
                 frame.setVisible(true);
-                finite_table.removeTable();
-                // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
-
-            }
-        });
-
-        saveToXML.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (aut != null) {
-                    TextInputDialog dialog = new TextInputDialog("walter");
-                    dialog.setTitle("Text Input Dialog");
-                    dialog.setHeaderText("Look, a Text Input Dialog");
-                    dialog.setContentText("Please enter your name:");
-
-// Traditional way to get the response value.
-                    Optional<String> result = dialog.showAndWait();
-                    if (result.isPresent()) {
-                        System.out.println("Your name: " + result.get());
-                    }
-
-// The Java 8 way to get the response value (with lambda expression).
-                    result.ifPresent(name -> System.out.println("Your name: " + name));
-                    aut = (Finite_Automation) frame.SaveGraph(aut);
-                    aut.SaveToXML(result.get());
-
-                }
-
 
                 // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
 
             }
         });
+
+
         begin_aut.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 if (aut != null) {
                     aut = (Finite_Automation) frame.SaveGraph(aut);
-                    aut.begin_aut(q0, qn, input_lent);
+                    ((Finite_Automation) aut).begin_aut(q0, qn, input_lent);
                     frame.Show_vert(String.valueOf(aut.getIndex()), "");
                 }
 
@@ -142,40 +170,33 @@ public class Finite_Aut_Controller {
             public void handle(MouseEvent event) {
                 if (aut != null) {
 
-                    frame.Show_vert(String.valueOf(aut.getCurr_state()), aut.getCurr_symbol());
+
                     if (aut.getIndex() < aut.getInput_lent().length) {
-                        aut.doStep();
+                        frame.Show_vert(aut.getCurr_state().getId(), aut.getCurr_symbol());
+                        ((Finite_Automation) aut).doStep();
+                    } else {
+                        frame.Show_vert(aut.getCurr_state().getId(), "");
+                        if (((Finite_Automation) aut).getCurr_state().getName().equals(qn.getText())) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Автомат");
+                            String s = "Цепочка принадлежит автомату";
+
+                            alert.setContentText(s);
+
+                            alert.showAndWait();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Автомат");
+                            String s = "Цепочка не принадлежит автомату";
+                            alert.setContentText(s);
+
+                            alert.showAndWait();
+                        }
                     }
                 }
             }
         });
-        load_button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                TextInputDialog dialog = new TextInputDialog("newFile.xml");
-                dialog.setTitle("Enter filename");
-                dialog.setHeaderText("Look, a Text Input Dialog");
-                dialog.setContentText("Please enter filename:");
 
-// Traditional way to get the response value.
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent()) {
-                    System.out.println("Your name: " + result.get());
-                }
-
-// The Java 8 way to get the response value (with lambda expression).
-                result.ifPresent(name -> System.out.println("Your name: " + name));
-                if (aut != null) {
-                    aut = (Finite_Automation) aut.LoadAutomation(result.get());
-                } else {
-                    aut = new Finite_Automation();
-                    aut = (Finite_Automation) aut.LoadAutomation(result.get());
-                }
-                frame = new graph.Graph(aut);
-                frame.setSize(800, 720);
-                frame.setVisible(true);
-            }
-        });
     }
 
 }

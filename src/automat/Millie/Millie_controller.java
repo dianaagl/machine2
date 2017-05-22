@@ -1,24 +1,26 @@
 package automat.Millie;
 
+import automat.Aut_cont;
 import automat.Jump_Table;
 import automat.State;
 import graph.graph;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.util.Optional;
+import java.io.File;
 
 
-public class Millie_controller {
-    private static Stage stage;
+public class Millie_controller extends Aut_cont {
+
     @FXML
     private AnchorPane parentPane;
     @FXML
@@ -29,37 +31,92 @@ public class Millie_controller {
     private Button show_table_but;
     @FXML
     private Button draw_graph_but;
-    @FXML
-    private Button saveToXML;
+
     @FXML
     private TextField n;
     @FXML
     private TextField m;
     @FXML
     private TextField q0;
-    @FXML
-    private TextField qn;
+
     @FXML
     private TextField input_lent;
     @FXML
     private Button begin_aut;
     @FXML
     private Button doStep_but;
-    @FXML
-    private Button load_button;
+
     @FXML
     private Label output_lent;
-    private Parent root;
-    private Millie_automation aut;
-    private graph.Graph frame;
 
     public Millie_controller() {
 
     }
 
+    /**
+     * Сохраняет файл в файл адресатов, который в настоящее время открыт.
+     * Если файл не открыт, то отображается диалог "save as".
+     */
+
+
     public Millie_controller(Stage stage, Parent root) {
-        this.stage = stage;
-        this.root = root;
+        super(stage, root);
+    }
+
+    @FXML
+    private void handleOpen() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Задаём фильтр расширений
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "XML files (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Показываем диалог загрузки файла
+        File file = fileChooser.showOpenDialog(stage);
+
+        if (file != null) {
+
+            if (aut != null) {
+                aut = (Millie_automation) aut.LoadAutomation(file.getAbsolutePath());
+            } else {
+                aut = new Millie_automation();
+                aut = (Millie_automation) aut.LoadAutomation(file.getAbsolutePath());
+            }
+            frame = new graph.Graph(aut, "old");
+            frame.setSize(800, 720);
+            frame.setVisible(true);
+        }
+    }
+
+    /**
+     * Открывает FileChooser, чтобы пользователь имел возможность
+     * выбрать файл, куда будут сохранены данные
+     */
+    @FXML
+    private void handleSaveAs() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Задаём фильтр расширений
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "XML files (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Показываем диалог сохранения файла
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            // Make sure it has the correct extension
+            if (!file.getPath().endsWith(".xml")) {
+                file = new File(file.getPath() + ".xml");
+            }
+            if (aut == null) {
+                aut = new Millie_automation();
+            }
+            aut = (Millie_automation) frame.SaveGraph(aut);
+            aut.SaveToXML(file.getAbsolutePath());
+
+        }
     }
 
     public void initialize() {
@@ -98,7 +155,7 @@ public class Millie_controller {
 
                 }
                 aut = new Millie_automation(states, lambda, alph, States, N, M);
-                frame = new graph.Graph(aut);
+                frame = new graph.Graph(aut, "new");
                 //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setSize(800, 720);
                 frame.setVisible(true);
@@ -108,34 +165,13 @@ public class Millie_controller {
             }
         });
 
-        saveToXML.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (aut != null) {
-                    TextInputDialog dialog = new TextInputDialog("newFile.xml");
-                    dialog.setTitle("Text Input Dialog");
-                    dialog.setHeaderText("Look, a Text Input Dialog");
-                    dialog.setContentText("Please enter filename:");
 
-                    Optional<String> result = dialog.showAndWait();
-
-                    aut = (Millie_automation) frame.SaveGraph(aut);
-                    aut.SaveToXML(result.get());
-
-
-                }
-
-
-                // Finite_Automation avt = new Finite_Automation(Integer.parseInt(n.getText()),Integer.parseInt(m.getText()),);
-
-            }
-        });
         begin_aut.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 if (aut != null) {
                     aut = (Millie_automation) frame.SaveGraph((Millie_automation) aut);
-                    aut.begin_aut(q0, qn, input_lent);
+                    ((Millie_automation) aut).begin_aut(q0, input_lent);
                     frame.Show_vert(String.valueOf(aut.getIndex()), "");
                 }
 
@@ -146,44 +182,30 @@ public class Millie_controller {
             public void handle(MouseEvent event) {
                 if (aut != null) {
 
-                    frame.Show_vert(String.valueOf(aut.getCurr_state()), aut.getCurr_symbol() + "," + aut.getOut());
-                    System.out.println(aut.getCurr_symbol() + "," + aut.getOut());
+                    System.out.println(aut.getCurr_symbol() + "," + ((Millie_automation) aut).getOut());
                     if (aut.getIndex() < aut.getInput_lent().length) {
-                        aut.doStep();
+                        frame.Show_vert(aut.getCurr_state().getId(), aut.getCurr_symbol() + "," + ((Millie_automation) aut).getOut());
+
+                        ((Millie_automation) aut).doStep();
                         output_lent.setText("");
-                        for (int i = 0; i < aut.output_lent.size(); i++) {
-                            output_lent.setText(output_lent.getText() + " " + aut.output_lent.get(i));
+                        for (int i = 0; i < ((Millie_automation) aut).output_lent.size(); i++) {
+                            output_lent.setText(output_lent.getText() + " " + ((Millie_automation) aut).output_lent.get(i));
                         }
+                    } else {
+                        frame.Show_vert(aut.getCurr_state().getId(), "");
+
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Автомат");
+                        String s = "конец входной цепочки";
+                        alert.setContentText(s);
+
+                        alert.showAndWait();
+
                     }
                 }
             }
         });
 
-        load_button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                TextInputDialog dialog = new TextInputDialog("newFile.xml");
-                dialog.setTitle("Enter filename");
-                dialog.setHeaderText("Look, a Text Input Dialog");
-                dialog.setContentText("Please enter filename:");
-
-// Traditional way to get the response value.
-                Optional<String> result = dialog.showAndWait();
-
-
-// The Java 8 way to get the response value (with lambda expression).
-
-                if (aut != null) {
-                    aut = (Millie_automation) aut.LoadAutomation(result.get());
-                } else {
-                    aut = new Millie_automation();
-                    aut = (Millie_automation) aut.LoadAutomation(result.get());
-                }
-                frame = new graph.Graph(aut);
-                frame.setSize(800, 720);
-                frame.setVisible(true);
-            }
-        });
 
     }
 

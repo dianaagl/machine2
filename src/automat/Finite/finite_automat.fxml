@@ -6,6 +6,26 @@
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="parent" fx:id="parentPane" prefHeight="480.0" prefWidth="640.0"
             xmlns="http://javafx.com/javafx/2.2" fx:controller="automat.Finite.Finite_Aut_Controller">
     <children>
+        <MenuBar fx:id="menu_bar" layoutX="0.0" layoutY="-2.0" minHeight="22.0" prefHeight="31.0" prefWidth="199.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleSaveAs" text="save" fx:id="save"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="open"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
         <Label layoutX="261.0" layoutY="54.0" prefWidth="131.0" text="Конечный автомат">
             <font>
                 <Font size="14.0"/>
@@ -18,8 +38,6 @@
         <Label layoutX="73.0" layoutY="92.0" prefWidth="541.0"
                text="Введите количество состояний и количество слов входного алфавита"/>
         <Label layoutX="91.0" layoutY="109.0" prefHeight="31.0" prefWidth="147.0" text="Таблица переходов"/>
-        <Button fx:id="saveToXML" layoutX="478.0" layoutY="187.0" mnemonicParsing="false"
-                prefHeight="36.999900000002526" prefWidth="139.9998779296875" text="Сохранить в xml"/>
         <Label layoutX="344.0" layoutY="296.0" prefHeight="37.0" prefWidth="131.0" text="входная лента"/>
         <TextField fx:id="q0" layoutX="261.0" layoutY="428.0" prefWidth="34.0" promptText="1" text="0"/>
         <TextField fx:id="qn" layoutX="344.0" layoutY="428.0" prefWidth="200.0" promptText="4 5" text="3"/>
@@ -29,19 +47,15 @@
                 prefWidth="140.0" text="Начать построение"/>
         <Button fx:id="doStep_but" layoutX="57.0" layoutY="352.0" mnemonicParsing="false" prefHeight="38.0"
                 prefWidth="140.0" text="Сделать ход"/>
-        <Button fx:id="load_button" layoutX="478.0" layoutY="125.0" mnemonicParsing="false" prefHeight="38.0"
-                prefWidth="140.0" text="загрузить автомат"/>
-        <ScrollPane layoutX="61.0" layoutY="143.0" prefHeight="132.0" prefWidth="317.0">
-            <content>
-                <AnchorPane id="pane" fx:id="jump_table" prefHeight="132.0" prefWidth="317.0" snapToPixel="true">
-                    <children>
-                        <TextField fx:id="n" layoutX="14.0" layoutY="22.0" prefWidth="42.0" text="3"/>
-                        <TextField fx:id="m" layoutX="70.0" layoutY="22.0" prefWidth="42.0" text="4"/>
-                        <Button id="build_but" fx:id="show_table_but" layoutX="0.0" layoutY="81.0"
-                                mnemonicParsing="false" prefHeight="37.0" prefWidth="140.0" text="Построить таблицу"/>
-                    </children>
-                </AnchorPane>
-            </content>
-        </ScrollPane>
+        <AnchorPane id="pane" fx:id="jump_table" layoutX="61.0" layoutY="146.0" prefHeight="132.0" prefWidth="317.0"
+                    snapToPixel="true">
+            <children>
+                <TextField fx:id="n" layoutX="14.0" layoutY="22.0" prefWidth="42.0" text="3"/>
+                <TextField fx:id="m" layoutX="70.0" layoutY="22.0" prefWidth="42.0" text="4"/>
+                <Button id="build_but" fx:id="show_table_but" layoutX="0.0" layoutY="81.0" mnemonicParsing="false"
+                        prefHeight="37.0" prefWidth="140.0" text="Построить таблицу"/>
+            </children>
+        </AnchorPane>
+
     </children>
 </AnchorPane>

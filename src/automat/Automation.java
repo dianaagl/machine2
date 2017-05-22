@@ -23,22 +23,125 @@ import java.util.ArrayList;
  * Created by Диана on 31.03.2017.
  */
 public abstract class Automation {
-    private int index;
-    private int curr_state;
-    private String curr_symbol;
-    private int alphabet_size;
-    private int states_count;
-    private int[][] jump_table;
-    private ArrayList<State> States;
-    private String[] alphabet;
-    private int q0;
-    private int[] qn;
-    private String[] input_lent;
+    protected int index;
+    protected State curr_state;
+    protected String curr_symbol;
+    protected int alphabet_size;
+    protected int states_count;
+    protected int[][] jump_table;
+    protected State[] States;
+    protected String[] alphabet;
+    protected String q0;
+    protected String[] qn;
+    protected String[] input_lent;
 
+    public State getStateByName(String name) {
+        for (int i = 0; i < States.length; i++) {
+            if (States[i].getName().equals(name)) {
+                return States[i];
+            }
+        }
+        return null;
+    }
 
-    public ArrayList<State> getStatesArray(ArrayList<State> states) {
+    public State getStateById(String id) {
+        for (int i = 0; i < getStates_count(); i++) {
+            if (getStates()[i].getId().equals(id)) {
+                return getStates()[i];
+            }
+        }
+        return null;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public State getCurr_state() {
+        return curr_state;
+    }
+
+    public void setCurr_state(State curr_state) {
+        this.curr_state = curr_state;
+    }
+
+    public String getCurr_symbol() {
+        return curr_symbol;
+    }
+
+    public void setCurr_symbol(String curr_symbol) {
+        this.curr_symbol = curr_symbol;
+    }
+
+    public int getAlphabet_size() {
+        return alphabet_size;
+    }
+
+    public void setAlphabet_size(int alphabet_size) {
+        this.alphabet_size = alphabet_size;
+    }
+
+    public int getStates_count() {
+        return states_count;
+    }
+
+    public void setStates_count(int states_count) {
+        this.states_count = states_count;
+    }
+
+    public int[][] getJump_table() {
+        return jump_table;
+    }
+
+    public void setJump_table(int[][] jump_table) {
+        this.jump_table = jump_table;
+    }
+
+    public State[] getStates() {
         return States;
     }
+
+    public void setStates(State[] states) {
+        States = states;
+    }
+
+    public String[] getAlphabet() {
+        return alphabet;
+    }
+
+    public void setAlphabet(String[] alphabet) {
+        this.alphabet = alphabet;
+    }
+
+    public String getQ0() {
+        return q0;
+    }
+
+    public void setQ0(String q0) {
+        this.q0 = q0;
+    }
+
+    public String[] getQn() {
+        return qn;
+    }
+
+    public void setQn(String[] qn) {
+        this.qn = qn;
+    }
+
+    public String[] getInput_lent() {
+        return input_lent;
+    }
+
+    public void setInput_lent(String[] input_lent) {
+        this.input_lent = input_lent;
+    }
+
+
     private void writeDocument(Document document, String filename) throws TransformerFactoryConfigurationError {
         try {
             Transformer tr = TransformerFactory.newInstance().newTransformer();
@@ -232,13 +335,13 @@ public abstract class Automation {
                 this.alphabet_size = alfabet_size;
                 this.states_count = states_size;
                 this.alphabet = newAlfabet;
-                this.States = newStates;
+            this.States = newStates.toArray(new State[newStates.size()]);
                 this.jump_table = new_jumpTable;
             if (this instanceof Finite_Automation) {
                 return new Finite_Automation(alfabet_size, states_size, jump_table, newStates.toArray(new State[newStates.size()]), newAlfabet);
             }
                 if (this instanceof Mour_automation) {
-
+                    ((Mour_automation) this).setLambda(newLambda);
                     return new Mour_automation(jump_table, newLambda, alphabet, newStates.toArray(new State[newStates.size()]), alfabet_size, states_size);
                 }
             if (this instanceof Millie_automation) {
@@ -257,53 +360,5 @@ public abstract class Automation {
         return this;
     }
 
-    abstract public int getIndex();
 
-    abstract public void setIndex(int index);
-
-    abstract public int getCurr_state();
-
-    abstract public void setCurr_state(int curr_state);
-
-    abstract public String getCurr_symbol();
-
-    abstract public void setCurr_symbol(String curr_symbol);
-
-    abstract public int getAlphabet_size();
-
-    abstract public void setAlphabet_size(int alphabet_size);
-
-    abstract public int getStates_count();
-
-    abstract public void setStates_count(int states_count);
-
-    abstract public int[][] getJump_table();
-
-    abstract public void setJump_table(int[][] jump_table);
-
-    abstract public State[] getStates();
-
-    abstract public void setStates(State[] states);
-
-    abstract public String[] getAlphabet();
-
-    abstract public void setAlphabet(String[] alphabet);
-
-    abstract public int getQ0();
-
-    public void setQ0(int q0) {
-        this.q0 = q0;
-    }
-
-    abstract public int[] getQn();
-
-    public void setQn(int[] qn) {
-        this.qn = qn;
-    }
-
-    abstract public String[] getInput_lent();
-
-    public void setInput_lent(String[] input_lent) {
-        this.input_lent = input_lent;
-    }
 }

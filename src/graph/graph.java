@@ -34,7 +34,7 @@ public class graph {
         private Object parent;
         private mxCell[] vert;
 
-        public Graph(Automation aut) {
+        public Graph(Automation aut, String new_or_old) {
             super("Automation Graph");
 
             Document xmlDocument = mxUtils.createDocument();
@@ -174,13 +174,11 @@ public class graph {
                 style2.put(mxConstants.STYLE_FONTCOLOR, "#251818");
                 style2.put(mxConstants.STYLE_FONTSIZE, 18);
 
-                style2.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_SIDETOSIDE);
-                style2.put(mxConstants.STYLE_ROUNDED, true);
-                style2.put(mxConstants.PERIMETER_ELLIPSE, true);
+
                 style2.put(mxConstants.STYLE_STROKEWIDTH, 2);
                 style2.put(mxConstants.STYLE_STROKECOLOR, "#414F81");
                 style2.put(mxConstants.STYLE_ARCSIZE, 50);
-                style2.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);//] = mxEdgeStyle.ElbowConnector;
+                //] = mxEdgeStyle.ElbowConnector;
                 stylesheet.putCellStyle("edge_style", style2);
 
 
@@ -242,22 +240,25 @@ public class graph {
             }
 
 
-            graph.setMultigraph(false);
+            graph.setMultigraph(true);
             graphComponent.setEnterStopsCellEditing(true);
 
             graph.setAllowDanglingEdges(false);
             graph.setDisconnectOnMove(false);
             graph.setEdgeLabelsMovable(true);
             graphComponent.setConnectable(true);
-            graphComponent.setToolTips(true);
+            graphComponent.setToolTips(false);
 
-            mxParallelEdgeLayout layout2 = new mxParallelEdgeLayout(graph);
+
             mxCircleLayout layout = new mxCircleLayout(graph);
             layout.setRadius(200);
             layout.setX0(100);
             layout.setY0(100);
             layout.execute(parent);
+            mxParallelEdgeLayout layout2 = new mxParallelEdgeLayout(graph);
+
             layout2.execute(parent);
+
 
 
 
@@ -337,15 +338,11 @@ public class graph {
                 mxStylesheet stylesheet = graph.getStylesheet();
                 Hashtable<String, Object> style = new Hashtable<String, Object>();
                 style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-
                 style.put(mxConstants.STYLE_FONTCOLOR, "#0D142B");
-
                 style.put(mxConstants.PERIMETER_ELLIPSE, true);
                 style.put(mxConstants.STYLE_STROKEWIDTH, 5);
-                style.put(mxConstants.STYLE_ARCSIZE, 50);
                 style.put(mxConstants.STYLE_FONTSIZE, 20);
                 style.put(mxConstants.STYLE_STROKECOLOR, "#0D142B");
-
                 stylesheet.putCellStyle("ROUND", style);
 
 
@@ -353,14 +350,13 @@ public class graph {
 
                 style2.put(mxConstants.STYLE_FONTCOLOR, "#251818");
                 style2.put(mxConstants.STYLE_FONTSIZE, 20);
-
-
                 style2.put(mxConstants.PERIMETER_ELLIPSE, true);
                 style2.put(mxConstants.STYLE_STROKEWIDTH, 4);
                 style2.put(mxConstants.STYLE_STROKECOLOR, "#414F00");
-
                 //] = mxEdgeStyle.ElbowConnector;
                 stylesheet.putCellStyle("edge_show", style2);
+
+
                 Object[] hightlight = new Object[1];
                 Object[] highlight_edge = new Object[1];
 
@@ -387,11 +383,10 @@ public class graph {
 
                                 hightlight[0] = (connect[j]);
 
-                                System.out.println("edges= " + ((mxCell) connect[j]).getEdgeCount());
 
                                 for (int i = 0; i < edges.length; i++) {
                                     Element edge = (Element) ((mxCell) edges[i]).getSource().getValue();
-                                    System.out.println("i=" + i + "id=" + edge.getAttribute("id"));
+                                    //System.out.println("i=" + i + "id=" + edge.getAttribute("id"));
                                     // if(graph.getLabel(((mxCell)connect[j]).getEdgeAt(i)).equals(label)){
                                     //.getEdgeAt(i).setStyle("edge_show");
                                     // }
@@ -417,6 +412,7 @@ public class graph {
                         }
                     }
                 }
+
 
             } finally {
                 // Updates the display

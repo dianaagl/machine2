@@ -1,5 +1,6 @@
 package automat.ShopAut;
 
+import automat.Aut_cont;
 import automat.State;
 import graph.graph;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,8 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class Shop_controller {
-    private static Stage stage;
+public class Shop_controller extends Aut_cont {
+
     @FXML
     private Button add_rule_butt;
     @FXML
@@ -54,18 +55,63 @@ public class Shop_controller {
     private TextField input_lent;
     @FXML
     private Label shop_lent;
-    private Parent root;
-
-    private Shop_automation aut;
-    private graph.Graph frame;
     private ObservableList<Rule> rules = FXCollections.observableArrayList();
+
+    /**
+     * Сохраняет файл в файл адресатов, который в настоящее время открыт.
+     * Если файл не открыт, то отображается диалог "save as".
+     */
+
+
     public Shop_controller() {
 
     }
 
     public Shop_controller(Stage stage, Parent root) {
-        this.stage = stage;
-        this.root = root;
+        super(stage, root);
+    }
+
+    @FXML
+    private void handleOpen() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Задаём фильтр расширений
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "XML files (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Показываем диалог загрузки файла
+        File file = fileChooser.showOpenDialog(stage);
+
+        if (file != null) {
+            aut = new Shop_automation();
+            aut.LoadAutomation(file.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Открывает FileChooser, чтобы пользователь имел возможность
+     * выбрать файл, куда будут сохранены данные
+     */
+    @FXML
+    private void handleSaveAs() {
+        FileChooser fileChooser = new FileChooser();
+
+        // Задаём фильтр расширений
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "XML files (*.xml)", "*.xml");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Показываем диалог сохранения файла
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            // Make sure it has the correct extension
+            if (!file.getPath().endsWith(".xml")) {
+                file = new File(file.getPath() + ".xml");
+            }
+            aut.SaveToXML(file.getAbsolutePath());
+        }
     }
 
     public void initialize() {
@@ -98,13 +144,16 @@ public class Shop_controller {
                 shop_lent.setText("");
 
                 if (aut.getIndex() < aut.getInput_lent().length) {
-                    frame.Show_vert(aut.getStatesArray().get(aut.getCurr_state()).getId(), aut.getLabel());
-                    aut.doStep();
-                    for (int i = 0; i < aut.getShop().size(); i++) {
-                        shop_lent.setText(shop_lent.getText() + aut.getShop().get(aut.getShop().size() - i - 1));
+                    frame.Show_vert(aut.getCurr_state().getId(),//getStates()[aut.getCurr_state()].getId(),
+                            ((Shop_automation) aut).getLabel());
+                    System.out.println("\ndoStep " + ((Shop_automation) aut).getCurr_state().getId() + " " + ((Shop_automation) aut).getLabel());
+                    ((Shop_automation) aut).doStep();
+                    for (int i = 0; i < ((Shop_automation) aut).getShop().size(); i++) {
+                        shop_lent.setText(shop_lent.getText() + ((Shop_automation) aut).getShop().get(((Shop_automation) aut).getShop().size() - i - 1));
                     }
 
                 } else {
+                    frame.Show_vert(((Shop_automation) aut).getCurr_state().getId(), "");
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("end");
                     String s = "Lent is over";
@@ -174,7 +223,7 @@ public class Shop_controller {
                 }
                 if (tr) {
                     aut = new Shop_automation(states, alfabet, states.size(), alfabet.size(), rules.size(), rules_map);
-                    frame = new graph.Graph(aut);
+                    frame = new graph.Graph(aut, "new");
                     //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     frame.setSize(800, 720);
                     frame.setVisible(true);
@@ -187,9 +236,10 @@ public class Shop_controller {
             public void handle(MouseEvent event) {
                 if (aut != null) {
                     System.out.println("\nq0=" + Sq0.getText());
-                    frame.Show_vert(Sq0.getText(), "");
+                    frame.Show_vert(aut.getStateByName(Sq0.getText()).getId(), "");
                     aut = (Shop_automation) frame.SaveGraph((Shop_automation) aut);
-                    aut.begin_aut(Sq0, Sqn, input_lent);
+                    ((Shop_automation) aut).begin_aut(Sq0, Sqn, input_lent);
+                    shop_lent.setText("");
                 }
             }
         });
@@ -217,7 +267,16 @@ public class Shop_controller {
                         ).setA(t.getNewValue());
                     }
                 }
+
         );
+        a.setOnEditCancel(new EventHandler<TableColumn.CellEditEvent<Rule, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Rule, String> t) {
+
+
+                System.out.println("\ncancell");
+            }
+        });
         z0.setOnEditCommit(
 
                 new EventHandler<TableColumn.CellEditEvent<Rule, String>>() {
@@ -258,53 +317,6 @@ public class Shop_controller {
         );
     }
 
-    @FXML
-    private void handleOpen() {
-        FileChooser fileChooser = new FileChooser();
 
-        // Задаём фильтр расширений
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "XML files (*.xml)", "*.xml");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        // Показываем диалог загрузки файла
-        File file = fileChooser.showOpenDialog(stage);
-
-        if (file != null) {
-            aut = new Shop_automation();
-            aut.LoadAutomation(file.getAbsolutePath());
-        }
-    }
-
-    /**
-     * Сохраняет файл в файл адресатов, который в настоящее время открыт.
-     * Если файл не открыт, то отображается диалог "save as".
-     */
-
-
-    /**
-     * Открывает FileChooser, чтобы пользователь имел возможность
-     * выбрать файл, куда будут сохранены данные
-     */
-    @FXML
-    private void handleSaveAs() {
-        FileChooser fileChooser = new FileChooser();
-
-        // Задаём фильтр расширений
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
-                "XML files (*.xml)", "*.xml");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        // Показываем диалог сохранения файла
-        File file = fileChooser.showSaveDialog(stage);
-
-        if (file != null) {
-            // Make sure it has the correct extension
-            if (!file.getPath().endsWith(".xml")) {
-                file = new File(file.getPath() + ".xml");
-            }
-            aut.SaveToXML(file.getAbsolutePath());
-        }
-    }
 
 }
