@@ -1,8 +1,9 @@
 package automat;
 
-import automat.Finite.Finite_Automation;
-import automat.Millie.Millie_automation;
-import automat.Moore.Mour_automation;
+import automat.Finite.FiniteAutomation;
+import automat.Millie.MillieAutomation;
+import automat.Moore.MourAutomation;
+import automat.ShopAut.ShopAutomation;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -168,17 +169,19 @@ public abstract class Automation {
 
             Element automaton = document.createElement("automaton");
             Element type = document.createElement("type");
-            if (this instanceof Finite_Automation) {
+            if (this instanceof FiniteAutomation) {
                 type.setTextContent("fa");
-            } else if (this instanceof Mour_automation) {
+            } else if (this instanceof MourAutomation) {
                 type.setTextContent("moore");
 
-            } else if (this instanceof Millie_automation) {
+            } else if (this instanceof MillieAutomation) {
                 type.setTextContent("mealy");
+            } else if (this instanceof ShopAutomation) {
+                type.setTextContent("pda");
             }
             String[] lambda = new String[getStates_count()];
-            if (this instanceof Mour_automation) {
-                lambda = ((Mour_automation) this).getLambda();
+            if (this instanceof MourAutomation) {
+                lambda = ((MourAutomation) this).getLambda();
             }
             root.appendChild(type);
 
@@ -197,7 +200,7 @@ public abstract class Automation {
                 state.appendChild(x);
 
                 state.appendChild(y);
-                if (this instanceof Mour_automation) {
+                if (this instanceof MourAutomation) {
                     Element output = document.createElement("output");
                     output.setTextContent(lambda[i]);
                     state.appendChild(output);
@@ -218,19 +221,39 @@ public abstract class Automation {
                         transition.appendChild(from);
                         transition.appendChild(to);
                         transition.appendChild(read);
-                        if (this instanceof Mour_automation) {
+                        if (this instanceof MourAutomation) {
                             Element transout = document.createElement("transout");
-                            transout.setTextContent(((Mour_automation) this).getLambda()[getJump_table()[i][j]]);
+                            transout.setTextContent(((MourAutomation) this).getLambda()[getJump_table()[i][j]]);
                             transition.appendChild(transout);
-                        } else if (this instanceof Millie_automation) {
+                        } else if (this instanceof MillieAutomation) {
                             Element transout = document.createElement("transout");
-                            transout.setTextContent(((Millie_automation) this).getLambda()[i][j]);
+                            transout.setTextContent(((MillieAutomation) this).getLambda()[i][j]);
                             transition.appendChild(transout);
                         }
+
                         automaton.appendChild(transition);
                     }
                 }
+
             }
+          /*  if(this instanceof ShopAutomation){
+                HashMap<Key,Takt> map = ((ShopAutomation)this).getRule_map();
+                for(int i = 0;i < map.size();i++){
+                    Element transition = document.createElement("transition");
+                    Element from = document.createElement("from");
+                    from.setTextContent(String.valueOf(map.get));
+                    Element to = document.createElement("to");
+                    to.setTextContent(String.valueOf(getJump_table()[i][j]));
+                    Element read = document.createElement("read");
+                    read.setTextContent(getAlphabet()[i]);
+
+                    transition.appendChild(from);
+                    transition.appendChild(to);
+                    transition.appendChild(read);
+                }
+
+            }
+            */
             // Устанавливаем значение текста внутри тега
             root.appendChild(automaton);
 
@@ -320,7 +343,7 @@ public abstract class Automation {
                     new_jumpTable[alfabet_list.indexOf(item.getElementsByTagName("read").item(0).getTextContent())]
                             [Integer.parseInt(item.getElementsByTagName("from").item(0).getTextContent())] =
                             Integer.parseInt(item.getElementsByTagName("to").item(0).getTextContent());
-                    if (this instanceof Millie_automation) {
+                    if (this instanceof MillieAutomation) {
                         new_Lambda_mealy[alfabet_list.indexOf(item.getElementsByTagName("read").item(0).getTextContent())]
                                 [Integer.parseInt(item.getElementsByTagName("from").item(0).getTextContent())] =
                                 item.getElementsByTagName("transout").item(0).getTextContent();
@@ -337,15 +360,15 @@ public abstract class Automation {
                 this.alphabet = newAlfabet;
             this.States = newStates.toArray(new State[newStates.size()]);
                 this.jump_table = new_jumpTable;
-            if (this instanceof Finite_Automation) {
-                return new Finite_Automation(alfabet_size, states_size, jump_table, newStates.toArray(new State[newStates.size()]), newAlfabet);
+            if (this instanceof FiniteAutomation) {
+                return new FiniteAutomation(alfabet_size, states_size, jump_table, newStates.toArray(new State[newStates.size()]), newAlfabet);
             }
-                if (this instanceof Mour_automation) {
-                    ((Mour_automation) this).setLambda(newLambda);
-                    return new Mour_automation(jump_table, newLambda, alphabet, newStates.toArray(new State[newStates.size()]), alfabet_size, states_size);
+            if (this instanceof MourAutomation) {
+                ((MourAutomation) this).setLambda(newLambda);
+                return new MourAutomation(jump_table, newLambda, alphabet, newStates.toArray(new State[newStates.size()]), alfabet_size, states_size);
                 }
-            if (this instanceof Millie_automation) {
-                return new Millie_automation(jump_table, new_Lambda_mealy, newAlfabet, newStates.toArray(new State[newStates.size()]), alfabet_size, states_size);
+            if (this instanceof MillieAutomation) {
+                return new MillieAutomation(jump_table, new_Lambda_mealy, newAlfabet, newStates.toArray(new State[newStates.size()]), alfabet_size, states_size);
             }
 
 
